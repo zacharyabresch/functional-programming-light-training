@@ -31,3 +31,54 @@ shouldBe13(takesTwo);
 shouldBe13(spreadArgs(takesTwo));
 console.log(numbers.reduce(gatherArgs(combineFirstTwo)));
 console.log(numbers.map(val => add(3, val)));
+
+console.log('<----- Currying ----->\n\n');
+
+const curry = (fn, arity = fn.length, nextCurried) =>
+  (nextCurried = prevArgs => nextArg => {
+    const args = [...prevArgs, nextArg];
+    if (args.length >= arity) {
+      return fn(...args);
+    } else {
+      return nextCurried(args);
+    }
+  })([]);
+
+const uncurry = fn => (...args) => {
+  let ret = fn;
+  for (let arg of args) {
+    ret = ret(arg);
+  }
+
+  return ret;
+};
+
+const looseCurry = (fn, arity = fn.length, nextCurried) =>
+  (nextCurried = prevArgs => (...nextArgs) => {
+    const args = [...prevArgs, ...nextArgs];
+    if (args.length >= arity) {
+      return fn(...args);
+    } else {
+      return nextCurried(args);
+    }
+  })([]);
+
+const adder = curry(add);
+console.log(numbers.map(adder(3)));
+
+const sum = (...nums) => {
+  let total = 0;
+  for (let num of nums) {
+    total += num;
+  }
+  return total;
+};
+
+const curriedSum = curry(sum, 5);
+const looseCurriedSum = looseCurry(sum, 5);
+const uncurriedSum = uncurry(curriedSum);
+
+console.log(sum(1, 2, 3, 4, 5));
+console.log(curriedSum(1)(2)(3)(4)(5));
+console.log(looseCurriedSum(1)(2, 3)(4, 5));
+console.log(uncurriedSum(1, 2, 3, 4, 5));
