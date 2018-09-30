@@ -1,6 +1,5 @@
-const unary = fn => arg => fn(arg);
-const identity = v => v;
-const constant = v => () => v;
+import { identity, unary, constant } from '../lib/zfp';
+
 const spreadArgs = fn => argsArr => fn(...argsArr);
 const gatherArgs = fn => (...argsArr) => fn(argsArr);
 const reverseArgs = fn => (...args) => fn(...args.reverse());
